@@ -4,182 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2025 Wrapped</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
-   <style>
-    /* ------------------------------------------------ */
-    /* 🎨 最終完美版：滿版播放器 + 無捲軸 + 銳利風格 */
-    /* ------------------------------------------------ */
     
-    * { box-sizing: border-box; } 
+    <meta name="robots" content="noindex, nofollow">
 
-    body { 
-        margin: 0; 
-        font-family: "Helvetica Neue", "Arial", "微軟正黑體", sans-serif; 
-        transition: background 0.8s ease; 
-        min-height: 100vh; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        background-color: #333;
-        overflow-x: hidden; 
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
 
-    .container { max-width: 1000px; width: 90%; padding: 50px 20px; text-align: center; }
-    
-    h1 { 
-    margin: 0 0 10px 0; 
-    
-    /* 👇 改用剛剛引入的新字體，沒有的話才用預設 */
-    font-family: 'Montserrat', sans-serif; 
-    
-    /* 👇 用最粗的字重，看起來才像海報 */
-    font-weight: 900; 
-    
-    /* 👇 字距稍微縮緊一點點，比較潮 */
-    letter-spacing: -1px; 
-    
-    font-size: 3.5rem; 
-    text-transform: uppercase; 
-    
-    /* 👇 稍微加一點陰影，增加層次感 (可選) */
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-}
-    
-    p { 
-        font-size: 1rem; letter-spacing: 5px; opacity: 0.7; 
-        margin-top: 0; margin-bottom: 50px; text-transform: uppercase; font-weight: 600;
-    }
+    <style>
+        /* ------------------------------------------------ */
+        /* 🎨 最終完美版：滿版播放器 + 無文字 + 圓形名牌 */
+        /* ------------------------------------------------ */
+        
+        * { box-sizing: border-box; } 
 
-    .nav-box { 
-        margin-bottom: 50px; display: flex; justify-content: center; align-items: center; gap: 40px; 
-    }
+        body { 
+            margin: 0; 
+            font-family: "Helvetica Neue", "Arial", "微軟正黑體", sans-serif; 
+            transition: background 0.8s ease; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background-color: #333;
+            overflow-x: hidden; 
+        }
 
-    button { 
-        padding: 10px 30px; font-size: 14px; border: 1px solid currentColor; 
-        background: rgba(255, 255, 255, 0.1); color: inherit; cursor: pointer; 
-        border-radius: 0; font-weight: 700; letter-spacing: 1px; transition: all 0.2s ease; 
-    }
-
-    button:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
-
-    #color-title { 
-        font-size: 24px; font-weight: 900; min-width: 60px; display: inline-block; letter-spacing: 2px;
-    }
-    
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-
-    /* 卡片設定 */
-    .card { 
-        background: rgba(255, 255, 255, 0.15); 
-        backdrop-filter: blur(10px); 
-        border: 1px solid rgba(255, 255, 255, 0.1); 
-        border-radius: 0; 
-        padding: 20px; /* 這裡保留內縮給文字 */
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-        transition: transform 0.2s;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden; 
-    }
-    
-    .card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.25); }
-
-    .user-name { 
-    /* 👇 字體設定 */
-    font-size: 14px; 
-    font-weight: 900;
-    color: #fff;
-    
-    /* 👇 這裡是正圓形的關鍵：設定固定的寬高 */
-    width: 36px;
-    height: 36px;
-    border-radius: 50%; /* 50% 就是圓形 */
-    
-    /* 👇 讓文字「水平」跟「垂直」都置中 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    /* 👇 背景與間距 */
-    background: rgba(0, 0, 0, 0.3); 
-    margin-bottom: 15px; 
-    padding: 0; /* 歸零，才不會把圓撐歪 */
-}
-    
-    /* 🔥 關鍵修正：讓播放器左右撐滿，解決切到問題 */
-    .iframe-container {
-        width: calc(100% + 40px); /* 寬度 = 100% + 左內縮 + 右內縮 */
-        margin-left: -20px;       /* 往左拉 20px 抵銷卡片內縮 */
-        margin-right: -20px;      /* 往右拉 20px */
-        height: 82px;
-        overflow: hidden;
-        position: relative;
-        background: #000; /* 補一個黑底，避免載入瞬間閃爍 */
-    }
-
-    iframe {
-        width: 100% !important;
-        height: 100% !important;
-        border: none !important;
-        display: block;
-        border-radius: 0 !important; 
-        overflow: hidden !important;
-    }
-    
-    .song-info { margin-top: 15px; color: inherit; } 
-    .song-title { font-size: 16px; font-weight: 800; margin-bottom: 4px; line-height: 1.3; }
-    .artist { font-size: 13px; opacity: 0.7; font-weight: 500; }
-    
-    /* 模式切換 */
-    body.light-mode { color: #222; }
-    body.light-mode .card { background: rgba(255, 255, 255, 0.4); border-color: rgba(255,255,255,0.4); } 
-    body.light-mode .user-name { background: rgba(0,0,0,0.1); color: #000; }
-    body.light-mode button { border-color: rgba(0,0,0,0.3); background: rgba(255,255,255,0.4); }
-    body.dark-mode { color: #fff; }
-
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes slideIn {
-        0% { opacity: 0; transform: translateX(30px); }
-        100% { opacity: 1; transform: translateX(0); }
-    }
-       /* 👇👇👇 新增這段：專門修復手機版面 👇👇👇 */
-    @media (max-width: 600px) {
-        .nav-box {
-            gap: 15px; /* 手機上間距縮小 */
-            width: 100%;
-            padding: 0 10px; /* 避免按鈕貼到螢幕邊緣 */
-            justify-content: space-between; /* 讓按鈕平均分散 */
+        .container { 
+            max-width: 1000px; 
+            width: 90%; 
+            padding: 50px 20px; 
+            text-align: center; 
         }
         
-        button {
-            padding: 10px 0; /* 手機上按鈕變瘦 */
-            width: 100px; /* 固定寬度，看起來比較整齊 */
-            font-size: 12px;
+        h1 { 
+            margin: 0 0 10px 0; 
+            font-family: 'Montserrat', sans-serif; /* 改用新字體 */
+            font-weight: 900; 
+            letter-spacing: -1px; 
+            font-size: 3.5rem; 
+            text-transform: uppercase; 
+            /* 移除 font-style: italic; */
+        }
+        
+        p { 
+            font-size: 1rem; 
+            letter-spacing: 5px; 
+            opacity: 0.7; 
+            margin-top: 0; 
+            margin-bottom: 50px; 
+            text-transform: uppercase; 
+            font-weight: 600;
         }
 
-        #color-title {
-            font-size: 18px; /* 中間字體稍微縮小 */
-            min-width: auto;
+        /* 導覽列 */
+        .nav-box { 
+            margin-bottom: 50px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 40px; 
+        }
+
+        button { 
+            padding: 10px 30px; 
+            font-size: 14px; 
+            border: 1px solid currentColor; 
+            background: rgba(255, 255, 255, 0.1); 
+            color: inherit; 
+            cursor: pointer; 
+            border-radius: 0; 
+            font-weight: 700; 
+            letter-spacing: 1px;
+            transition: all 0.2s ease; 
+        }
+
+        button:hover { 
+            background: rgba(255, 255, 255, 0.3); 
+            transform: translateY(-2px);
+        }
+
+        #color-title { 
+            font-size: 24px; 
+            font-weight: 900; 
+            min-width: 60px; 
+            display: inline-block; 
+            letter-spacing: 2px;
         }
         
-        .container {
-            padding-top: 20px; /* 手機版上方留白減少 */
+        /* 格線系統 */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+        /* 卡片設計 */
+        .card { 
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 0; /* 直角 */
+            padding: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            transition: transform 0.2s;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
         }
         
-        h1 {
-            font-size: 2.5rem; /* 手機版標題縮小一點 */
+        .card:hover { 
+            transform: translateY(-5px); 
+            background: rgba(255, 255, 255, 0.25); 
         }
-    }
-</style>
+
+        /* 名字小圓球 */
+        .user-name { 
+            font-size: 14px; 
+            font-weight: 900;
+            color: #fff;
+            width: 36px;  /* 固定寬度 */
+            height: 36px; /* 固定高度 */
+            border-radius: 50%; /* 正圓形 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3); 
+            margin-bottom: 15px; 
+            padding: 0;
+        }
+        
+        /* 播放器容器：滿版設定 */
+        .iframe-container {
+            width: calc(100% + 40px); /* 寬度加寬抵銷內縮 */
+            margin-left: -20px;       /* 往左拉 */
+            margin-right: -20px;      /* 往右拉 */
+            margin-bottom: -20px;     /* 🔥 往下底銷內縮，讓它貼底 */
+            height: 82px;
+            overflow: hidden;
+            position: relative;
+            background: #000;         /* 黑底防閃爍 */
+        }
+
+        iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            display: block;
+            border-radius: 0 !important; 
+            overflow: hidden !important;
+        }
+        
+        /* 模式切換 */
+        body.light-mode { color: #222; }
+        body.light-mode .card { background: rgba(255, 255, 255, 0.4); border-color: rgba(255,255,255,0.4); } 
+        body.light-mode .user-name { background: rgba(0,0,0,0.1); color: #000; }
+        body.light-mode button { border-color: rgba(0,0,0,0.3); background: rgba(255,255,255,0.4); }
+        body.dark-mode { color: #fff; }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* 手機版面修正 */
+        @media (max-width: 600px) {
+            .nav-box {
+                gap: 15px;
+                width: 100%;
+                padding: 0 10px;
+                justify-content: space-between;
+            }
+            button {
+                padding: 10px 0;
+                width: 100px;
+                font-size: 12px;
+            }
+            #color-title { font-size: 18px; }
+            .container { padding-top: 20px; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
 </head>
 <body>
 
@@ -327,6 +331,7 @@
 
             songList.forEach((song, i) => {
                 const trackId = getSpotifyId(song.link);
+                // 改用官方 HTTPS 連結，確保安全
                 const embedUrl = trackId ? `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0` : "";
 
                 const html = `
@@ -335,23 +340,16 @@
                         
                         <div class="iframe-container">
                             ${embedUrl ? 
-                            /* 🔥 關鍵修正 5：在 HTML 標籤內強制加入 scrolling="no" */
-                            `<iframe src="${embedUrl}" scrolling="no" style="width:100%; height:82px; border:none; overflow:hidden;" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` 
+                            `<iframe src="${embedUrl}" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` 
                             : `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.05); font-size:12px; border:1px dashed currentColor; opacity:0.5;">待補連結</div>`
                             }
                         </div>
-
-                        <div class="song-info">
-                            <div class="song-title">${song.name}</div>
-                            <div class="artist">${song.artist}</div>
                         </div>
-                    </div>
                 `;
                 listDiv.innerHTML += html;
             });
         }
 
-        // 動畫設定
         const style = document.createElement('style');
         style.innerHTML = `
             @keyframes slideIn {
