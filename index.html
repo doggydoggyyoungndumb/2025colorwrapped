@@ -13,7 +13,7 @@
 
     <style>
         /* ------------------------------------------------ */
-        /* 🎨 最終完美版：滿版播放器 + 無文字 + 圓形名牌 */
+        /* 🎨 選項 B：唱片行風 (大專輯封面) + 滿版置底 */
         /* ------------------------------------------------ */
         
         * { box-sizing: border-box; } 
@@ -39,12 +39,11 @@
         
         h1 { 
             margin: 0 0 10px 0; 
-            font-family: 'Montserrat', sans-serif; /* 改用新字體 */
+            font-family: 'Montserrat', sans-serif; 
             font-weight: 900; 
             letter-spacing: -1px; 
             font-size: 3.5rem; 
             text-transform: uppercase; 
-            /* 移除 font-style: italic; */
         }
         
         p { 
@@ -101,7 +100,7 @@
             background: rgba(255, 255, 255, 0.15); 
             backdrop-filter: blur(10px); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 0; /* 直角 */
+            border-radius: 0; 
             padding: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             transition: transform 0.2s;
@@ -121,9 +120,9 @@
             font-size: 14px; 
             font-weight: 900;
             color: #fff;
-            width: 36px;  /* 固定寬度 */
-            height: 36px; /* 固定高度 */
-            border-radius: 50%; /* 正圓形 */
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -132,16 +131,20 @@
             padding: 0;
         }
         
-        /* 播放器容器：滿版設定 */
+        /* 播放器容器：🔥 這裡改大了，變成方形 */
         .iframe-container {
-            width: calc(100% + 40px); /* 寬度加寬抵銷內縮 */
-            margin-left: -20px;       /* 往左拉 */
-            margin-right: -20px;      /* 往右拉 */
-            margin-bottom: -20px;     /* 🔥 往下底銷內縮，讓它貼底 */
-            height: 82px;
+            width: calc(100% + 40px);
+            margin-left: -20px;
+            margin-right: -20px;
+            margin-bottom: -25px; /* 貼底 */
+            
+            /* 👇 改這裡：高度變大，容納大封面 */
+            height: 352px; 
+            
             overflow: hidden;
             position: relative;
-            background: #000;         /* 黑底防閃爍 */
+            background: #000;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         iframe {
@@ -331,7 +334,7 @@
 
             songList.forEach((song, i) => {
                 const trackId = getSpotifyId(song.link);
-                // 改用官方 HTTPS 連結，確保安全
+                // 使用官方 HTTPS 連結
                 const embedUrl = trackId ? `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0` : "";
 
                 const html = `
@@ -340,11 +343,12 @@
                         
                         <div class="iframe-container">
                             ${embedUrl ? 
-                            `<iframe src="${embedUrl}" scrolling="no" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` 
+                            /* 🔥 關鍵：這裡把高度設為 352px，強制顯示大封面 */
+                            `<iframe src="${embedUrl}" scrolling="no" style="width:100%; height:352px; border:none; overflow:hidden;" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` 
                             : `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.05); font-size:12px; border:1px dashed currentColor; opacity:0.5;">待補連結</div>`
                             }
                         </div>
-                        </div>
+                    </div>
                 `;
                 listDiv.innerHTML += html;
             });
