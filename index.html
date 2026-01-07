@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 Wrapped</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+   <style>
+    /* ------------------------------------------------ */
+    /* 🎨 最終完美版：滿版播放器 + 無捲軸 + 銳利風格 */
+    /* ------------------------------------------------ */
+    
+    * { box-sizing: border-box; } 
+
+    body { 
+        margin: 0; 
+        font-family: "Helvetica Neue", "Arial", "微軟正黑體", sans-serif; 
+        transition: background 0.8s ease; 
+        min-height: 100vh; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        background-color: #333;
+        overflow-x: hidden; 
+    }
+
+    .container { max-width: 1000px; width: 90%; padding: 50px 20px; text-align: center; }
+    
+    h1 { 
+    margin: 0 0 10px 0; 
+    
+    /* 👇 改用剛剛引入的新字體，沒有的話才用預設 */
+    font-family: 'Montserrat', sans-serif; 
+    
+    /* 👇 用最粗的字重，看起來才像海報 */
+    font-weight: 900; 
+    
+    /* 👇 字距稍微縮緊一點點，比較潮 */
+    letter-spacing: -1px; 
+    
+    font-size: 3.5rem; 
+    text-transform: uppercase; 
+    
+    /* 👇 稍微加一點陰影，增加層次感 (可選) */
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+    
+    p { 
+        font-size: 1rem; letter-spacing: 5px; opacity: 0.7; 
+        margin-top: 0; margin-bottom: 50px; text-transform: uppercase; font-weight: 600;
+    }
+
+    .nav-box { 
+        margin-bottom: 50px; display: flex; justify-content: center; align-items: center; gap: 40px; 
+    }
+
+    button { 
+        padding: 10px 30px; font-size: 14px; border: 1px solid currentColor; 
+        background: rgba(255, 255, 255, 0.1); color: inherit; cursor: pointer; 
+        border-radius: 0; font-weight: 700; letter-spacing: 1px; transition: all 0.2s ease; 
+    }
+
+    button:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+
+    #color-title { 
+        font-size: 24px; font-weight: 900; min-width: 60px; display: inline-block; letter-spacing: 2px;
+    }
+    
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+    /* 卡片設定 */
+    .card { 
+        background: rgba(255, 255, 255, 0.15); 
+        backdrop-filter: blur(10px); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        border-radius: 0; 
+        padding: 20px; /* 這裡保留內縮給文字 */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+        transition: transform 0.2s;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+    }
+    
+    .card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.25); }
+
+    .user-name { 
+    /* 👇 字體設定 */
+    font-size: 14px; 
+    font-weight: 900;
+    color: #fff;
+    
+    /* 👇 這裡是正圓形的關鍵：設定固定的寬高 */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; /* 50% 就是圓形 */
+    
+    /* 👇 讓文字「水平」跟「垂直」都置中 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 👇 背景與間距 */
+    background: rgba(0, 0, 0, 0.3); 
+    margin-bottom: 15px; 
+    padding: 0; /* 歸零，才不會把圓撐歪 */
+}
+    
+    /* 🔥 關鍵修正：讓播放器左右撐滿，解決切到問題 */
+    .iframe-container {
+        width: calc(100% + 40px); /* 寬度 = 100% + 左內縮 + 右內縮 */
+        margin-left: -20px;       /* 往左拉 20px 抵銷卡片內縮 */
+        margin-right: -20px;      /* 往右拉 20px */
+        height: 82px;
+        overflow: hidden;
+        position: relative;
+        background: #000; /* 補一個黑底，避免載入瞬間閃爍 */
+    }
+
+    iframe {
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        display: block;
+        border-radius: 0 !important; 
+        overflow: hidden !important;
+    }
+    
+    .song-info { margin-top: 15px; color: inherit; } 
+    .song-title { font-size: 16px; font-weight: 800; margin-bottom: 4px; line-height: 1.3; }
+    .artist { font-size: 13px; opacity: 0.7; font-weight: 500; }
+    
+    /* 模式切換 */
+    body.light-mode { color: #222; }
+    body.light-mode .card { background: rgba(255, 255, 255, 0.4); border-color: rgba(255,255,255,0.4); } 
+    body.light-mode .user-name { background: rgba(0,0,0,0.1); color: #000; }
+    body.light-mode button { border-color: rgba(0,0,0,0.3); background: rgba(255,255,255,0.4); }
+    body.dark-mode { color: #fff; }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes slideIn {
+        0% { opacity: 0; transform: translateX(30px); }
+        100% { opacity: 1; transform: translateX(0); }
+    }
+</style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>2025 Wrapped</h1>
+        <p>Color of the Year</p>
+
+        <div class="nav-box">
+            <button onclick="changeColor(-1)">❮ PREV</button>
+            <span id="color-title">紅</span>
+            <button onclick="changeColor(1)">NEXT ❯</button>
+        </div>
+
+        <div class="grid" id="song-list"></div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           👇👇👇 資料區 👇👇👇
+           ========================================================================== */
+
+        const data = {
+            "紅": [
+                { user: "雨", name: "Catch Me Baby Come and Dive", artist: "DSPS", link: "https://open.spotify.com/track/6YOxuVfz32LxBYq7rWpfEm?si=0fc3a81aa0ec43d9" },
+                { user: "希", name: "Marry Me", artist: "庸俗救星Vulgar Savior", link: "https://open.spotify.com/track/2J5EbJJJwE5H1u9x4gfiMB?si=5d6bf839f2a74a17" },
+                { user: "彤", name: "電線桿上的鳥", artist: "LÜCY", link: "https://open.spotify.com/track/0dpB0yst1MTUUeKvMksTRP?si=c82b80f559ca4df1" },
+                { user: "穎", name: "夢遺少年", artist: "宋冬野", link: "https://open.spotify.com/track/63LyUfHPnZEpuWijcMYR0Z?si=c3f4f7c5cbd14856" },
+                { user: "政", name: "安和橋", artist: "宋冬野", link: "https://open.spotify.com/track/5fnPa9kDsSIGyA6Eu37L8Y?si=5569e2f04382479c" },
+                { user: "羽", name: "LOVE (Variation 1)", artist: "Lia Ouyang Rusli", link: "https://open.spotify.com/track/1Iup6yDOBHU0AeANKXf62Q?si=f85c98642bf4461c" },
+            ],
+            
+            "黃": [
+                { user: "雨", name: "GoGo Romeo", artist: "囍浪樂隊", link: "https://open.spotify.com/track/26Nz4SBDijER3dRDsQomA1?si=be8eb99d7d164d57" },
+                { user: "希", name: "金黃色的", artist: "鄭宜農", link: "https://open.spotify.com/track/57ep1vygRWPQCeFx4pqsuO?si=595d0c67d4834a34" },
+                { user: "彤", name: "From The Start", artist: "Laufey", link: "https://open.spotify.com/track/1Ukxccao1BlWrPhYkcXbwZ?si=dc50e0dae6a945d5" },
+                { user: "穎", name: "相信", artist: "孫燕姿", link: "https://open.spotify.com/track/0IiVuHYZZFUTgUtAT4sIWY?si=1f54d651dd2d4904" },
+                { user: "政", name: "November Rain", artist: "Guns N' Roses", link: "https://open.spotify.com/track/3YRCqOhFifThpSRFJ1VWFM?si=e6b7799f38b041b4" },
+                { user: "羽", name: "黃昏公路", artist: "滅火器", link: "https://open.spotify.com/track/6thPou5IIoV6JzugwZJzyZ?si=44135c13139c4904" },
+            ],
+
+            "藍": [
+                { user: "雨", name: "Blue Valentine", artist: "NMIXX", link: "https://open.spotify.com/track/4i0HNuFEH6P6K4UnsY5uUh?si=f01cdd94c9aa4cc6" },
+                { user: "希", name: "Rollin' On", artist: "椅子樂團", link: "https://open.spotify.com/track/63oSPrP54in4X41vq6cNlL?si=67e50c2f7db64000" },
+                { user: "彤", name: "Mystery of Love", artist: "Sufjan Stevens", link: "https://open.spotify.com/track/4HbeGjbt7u3pvwDk1vN7P0?si=f352c759ee7247b8" },
+                { user: "穎", name: "I Hope to Be Around", artist: "Men I Trust", link: "https://open.spotify.com/track/3xnM0WCRJKk4Iz49rkG5OC?si=0a7658484f3045cf" },
+                { user: "政", name: "夜間漫遊", artist: "蛋堡", link: "https://open.spotify.com/track/2onfXI96JuQnKadEGl6E7J?si=743f10e140574393" },
+                { user: "羽", name: "敦化南路", artist: "Gummy B", link: "https://open.spotify.com/track/5JQ27g2zVkDSLaF6GqfyWW?si=eb1e6c2dff2a4b31" },
+            ],
+
+            "紫": [
+                { user: "雨", name: "Another Day of Sun", artist: "La La Land Cast", link: "https://open.spotify.com/track/5kRBzRZmZTXVg8okC7SJFZ?si=0a48cfb553074b80" },
+                { user: "希", name: "戀人", artist: "美秀集團", link: "https://open.spotify.com/track/0FeNHq2UAbJQ2qBLiJEXBN?si=e137c39d514449d6" },
+                { user: "彤", name: "Diane", artist: "Blueburn", link: "https://open.spotify.com/track/6efJhdddUNkrpjl0NCzp2G?si=073e6cbb34de4fda" },
+                { user: "穎", name: "Summer We Know", artist: "Science Noodles", link: "https://open.spotify.com/track/0XvxhOviTsBDi609HgVfHy?si=39714fc57e0f4c3b" },
+                { user: "政", name: "The Less I Know the Better", artist: "Tame Impala", link: "https://open.spotify.com/track/6K4t31amVTZDgR3sKmwUJJ?si=add40cd470044b5b" },
+                { user: "羽", name: "懶得進化 (feat. The Crane)", artist: "吳獻 Osean, The Crane", link: "https://open.spotify.com/track/4D9757p3f7ZVTZ2hvU7GN1?si=5c2f611d6c7c4f95" },
+            ],
+
+            "綠": [
+                { user: "雨", name: "My Turn", artist: "Not for Radio", link: "https://open.spotify.com/track/0HrsOXHxl421JdkscJY1mE?si=3a75cc5e038d4457" },
+                { user: "希", name: "天天想你", artist: "陳綺貞", link: "https://open.spotify.com/track/0QZQOCn9b6joJMHuTOLCTb?si=f13b3734f99f4c64" },
+                { user: "彤", name: "你那裡是什麼天氣？", artist: "LÜCY", link: "https://open.spotify.com/track/4BS21Ml98f5JYN11KddnPt?si=b101ddc4f1b54671" },
+                { user: "穎", name: "Prologue (Tango apasionado)", artist: "阿斯托爾·皮亞佐拉", link: "https://open.spotify.com/track/7r1cMBW8Ll3lWypg98FmQw?si=526efe2f8d49463f" },
+                { user: "政", name: "停靠 - Unplugged", artist: "Who Cares 胡凱兒", link: "https://open.spotify.com/track/7y1t0ZGlaPhsCGnI8SzYZn?si=4f2262d9f4d84289" },
+                { user: "羽", name: "今天的外套", artist: "Bad Sweetheart", link: "https://open.spotify.com/track/5FGCtOCHEGV4p8dTyQau1e?si=1dc3323ec7ca4217" },
+            ],
+
+            "粉": [
+                { user: "雨", name: "Espresso", artist: "Sabrina Carpenter", link: "https://open.spotify.com/track/6ev5nHxXH1R6CSgxHSEqHN?si=3dcd6edb73df40fe" },
+                { user: "希", name: "巫堵", artist: "deca joins", link: "https://open.spotify.com/track/6CxQsBfTmhx0RsoJoV8hH7?si=ba0611007b274c64" },
+                { user: "彤", name: "自己的房間", artist: "葉穎", link: "https://open.spotify.com/track/64k2nrxLJFnahcgMYABgUT?si=89db0685b1e741ff" },
+                { user: "穎", name: "愚蠢的樂觀", artist: "蘇研之", link: "https://open.spotify.com/track/1OED7w3pwGHoUkTNVJqnP4?si=421ff87a16c74615" },
+                { user: "政", name: "Kaiju no Hanauta", artist: "Vaundy", link: "https://open.spotify.com/track/1pCcNaCodPssCc8Aq68gPS?si=7f59ad65ec294ca8" },
+                { user: "羽", name: "成人", artist: "HUSH", link: "https://open.spotify.com/track/7C5h7ZbuuUHHlGRmSHu2G8?si=c0fc7b599b9240f6" },
+            ],
+
+            "黑": [
+                { user: "雨", name: "我常常有一種感覺", artist: "當代電影大師", link: "https://open.spotify.com/track/7MOzpgUclb25mdkuFRghDx?si=54b16ed827fd465a" },
+                { user: "希", name: "轉圈圈", artist: "Crispy脆樂團", link: "https://open.spotify.com/track/3UdR4a7tF6CKv6bkzLpqOA?si=ddbd3a2f7633445c" },
+                { user: "彤", name: "K.", artist: "Cigarettes After Sex", link: "https://open.spotify.com/track/2xGjfbXZnI8uQDhukoQURQ?si=4fa854e0b54d441d" },
+                { user: "穎", name: "As the World Caves In", artist: "Matt Maltese", link: "https://open.spotify.com/track/4JE6agBLHGA5TaF6FlqfBD?si=57ec8c2787784d00" },
+                { user: "政", name: "Time", artist: "Pink Floyd", link: "https://open.spotify.com/track/3TO7bbrUKrOSPGRTB5MeCz?si=bb8affea74d94f25" },
+                { user: "羽", name: "Complicated", artist: "Matt Maltese", link: "https://open.spotify.com/track/3wRVFzkM2QTgpwDhr8UoFq?si=9118f52c1b7347d2" },
+            ],
+
+            "白": [
+                { user: "雨", name: "搬到合歡山上", artist: "雲端司機CLOUDRIVER", link: "https://open.spotify.com/track/1efBu9gAPeuc6RdjCkBiwg?si=f7efef5bbd984f36" },
+                { user: "希", name: "我愛你", artist: "Cody·Lee(李)", link: "https://open.spotify.com/track/7jXoUqjqJVQGHDBs9ZGy08?si=b3a202e88f264caa" },
+                { user: "彤", name: "抱歉抱歉", artist: "陳粒", link: "https://open.spotify.com/track/23rccUe3wwqTSJlqgWqzpI?si=84b437891d0a4526" },
+                { user: "穎", name: "模樣", artist: "張懸", link: "https://open.spotify.com/track/1tiHrtLaesjqidgDh2qpXv?si=c60b522cb95b4d49" },
+                { user: "政", name: "Leave Out All the Rest", artist: "Linkin Park", link: "https://open.spotify.com/track/0sp00HSXkQyqTa6QqM0O8V?si=7e749913f1b04b80" },
+                { user: "羽", name: "Second Best", artist: "Blueburn", link: "https://open.spotify.com/track/5sSnqXzi6lNNvG3u0SISFF?si=ded8980842664214" },
+            ],
+
+            "隨機": [
+                { user: "雨", name: "人間指南", artist: "陳婧霏", link: "https://open.spotify.com/track/18n1uqpcYq3w663Z0Cquqs?si=75b51e0644c14fbd" },
+                { user: "希", name: "Not Like Us", artist: "Kendrick Lamar", link: "https://open.spotify.com/track/6AI3ezQ4o3HUoP6Dhudph3?si=00ecdc6a9f894722" },
+                { user: "彤", name: "Nothing's Gonna Hurt You Baby", artist: "Cigarettes After Sex", link: "https://open.spotify.com/track/3W7KHojYGgYaoX9ogKO9hU?si=5ee98c9b766d447d" },
+                { user: "穎", name: "現在怎麼辦", artist: "何欣穗", link: "https://open.spotify.com/track/1QFHcaJjWS0RadST1jaDhh?si=f5d0f1dc46254646" },
+                { user: "政", name: "Everglow", artist: "Coldplay", link: "https://open.spotify.com/track/5qfZRNjt2TkHEL12r3sDEU?si=26eb280c292a42c7" },
+                { user: "羽", name: "別讓我孤單", artist: "猛虎巧克力", link: "https://open.spotify.com/track/2uv7xhb5J9xhxwP7aB0wGZ?si=cd5aa63369514591" },
+            ]
+        };
+
+        const colorMap = {
+            "紅": "#A65E5E", "黃": "#E6D690", "藍": "#5E72A6",
+            "紫": "#7D5EA6", "綠": "#5E8C5E", "粉": "#D98CB3",
+            "黑": "#2C2C2C", "白": "#EAEAEA", "隨機": "rainbow"
+        };
+
+        let colorKeys = Object.keys(data);
+        let currentIndex = 0;
+
+        function getSpotifyId(link) {
+            try {
+                if(link.includes("track/")) {
+                    return link.split("track/")[1].split("?")[0];
+                }
+                return ""; 
+            } catch(e) { return ""; }
+        }
+
+        function render() {
+            const colorName = colorKeys[currentIndex];
+            const songList = data[colorName];
+            const colorCode = colorMap[colorName];
+            
+            const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
+
+            if (colorName === "隨機") {
+                document.body.style.background = "linear-gradient(-45deg, #FF9A9E, #FECFEF, #E0C3FC, #8EC5FC)";
+                document.body.style.backgroundSize = "400% 400%";
+                document.body.style.animation = "gradientBG 10s ease infinite";
+                document.body.className = "light-mode"; 
+            } else {
+                document.body.style.background = colorCode;
+                document.body.style.animation = "none";
+                document.body.className = isLight ? "light-mode" : "dark-mode";
+            }
+            
+            document.getElementById("color-title").innerText = colorName;
+
+            const listDiv = document.getElementById("song-list");
+            listDiv.innerHTML = ""; 
+
+            songList.forEach((song, i) => {
+                const trackId = getSpotifyId(song.link);
+                const embedUrl = trackId ? `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0` : "";
+
+                const html = `
+                    <div class="card" style="animation: slideIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards ${i * 0.05}s; opacity: 0;">
+                        <span class="user-name">${song.user}</span>
+                        
+                        <div class="iframe-container">
+                            ${embedUrl ? 
+                            /* 🔥 關鍵修正 5：在 HTML 標籤內強制加入 scrolling="no" */
+                            `<iframe src="${embedUrl}" scrolling="no" style="width:100%; height:82px; border:none; overflow:hidden;" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` 
+                            : `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.05); font-size:12px; border:1px dashed currentColor; opacity:0.5;">待補連結</div>`
+                            }
+                        </div>
+
+                        <div class="song-info">
+                            <div class="song-title">${song.name}</div>
+                            <div class="artist">${song.artist}</div>
+                        </div>
+                    </div>
+                `;
+                listDiv.innerHTML += html;
+            });
+        }
+
+        // 動畫設定
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slideIn {
+                0% { opacity: 0; transform: translateX(30px); }
+                100% { opacity: 1; transform: translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function changeColor(direction) {
+            currentIndex = (currentIndex + direction + colorKeys.length) % colorKeys.length;
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
