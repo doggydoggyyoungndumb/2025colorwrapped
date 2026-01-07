@@ -151,6 +151,34 @@
         0% { opacity: 0; transform: translateX(30px); }
         100% { opacity: 1; transform: translateX(0); }
     }
+       /* 👇👇👇 新增這段：專門修復手機版面 👇👇👇 */
+    @media (max-width: 600px) {
+        .nav-box {
+            gap: 15px; /* 手機上間距縮小 */
+            width: 100%;
+            padding: 0 10px; /* 避免按鈕貼到螢幕邊緣 */
+            justify-content: space-between; /* 讓按鈕平均分散 */
+        }
+        
+        button {
+            padding: 10px 0; /* 手機上按鈕變瘦 */
+            width: 100px; /* 固定寬度，看起來比較整齊 */
+            font-size: 12px;
+        }
+
+        #color-title {
+            font-size: 18px; /* 中間字體稍微縮小 */
+            min-width: auto;
+        }
+        
+        .container {
+            padding-top: 20px; /* 手機版上方留白減少 */
+        }
+        
+        h1 {
+            font-size: 2.5rem; /* 手機版標題縮小一點 */
+        }
+    }
 </style>
 </head>
 <body>
