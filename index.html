@@ -337,14 +337,18 @@
             
             const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
 
-            if (colorName === "隨機") {
-                // 🔥 修改這裡：賽博龐克 (Cyberpunk) 風格
-                document.body.style.background = "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)";
-                document.body.style.backgroundSize = "400% 400%";
-                document.body.style.animation = "gradientBG 10s ease infinite";
+           if (colorName === "隨機") {
+                // ✨ 有質感的午夜極光色：深黑藍 -> 深紫 -> 霓虹紫微光
+                document.body.style.background = "linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #6a11cb)";
                 
-                // 🔥 修改這裡：切換成深色模式 (Dark Mode)，因為背景很黑
-                document.body.className = "dark-mode"; 
+                // 設定流動範圍
+                document.body.style.backgroundSize = "400% 400%";
+                
+                // ✨ 這裡改成 15s (原本10s)，流動速度變慢，會更優雅
+                document.body.style.animation = "gradientBG 15s ease infinite";
+                
+                // 背景深，所以字要變白
+                document.body.className = "dark-mode"; }
             } else {
                 document.body.style.background = colorCode;
                 document.body.style.animation = "none";
