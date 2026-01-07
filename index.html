@@ -13,7 +13,7 @@
 
     <style>
         /* ------------------------------------------------ */
-        /* 🎨 最終修正版：順序恢復 + 手機滑動翻頁 */
+        /* 🎨 最終質感版：午夜極光隨機色 + 手機滑動 + 正確排序 */
         /* ------------------------------------------------ */
         
         * { box-sizing: border-box; } 
@@ -112,7 +112,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden; 
-            /* 🔥 移除之前為了絕對定位加的 padding-bottom */
         }
         
         .card:hover { 
@@ -137,17 +136,15 @@
             flex-shrink: 0; 
         }
 
-        /* 🔥 播放器容器：恢復為正常堆疊佈局 */
+        /* 播放器容器 */
         .iframe-container {
-            /* 移除絕對定位 */
             position: relative;
-            width: calc(100% + 40px); /* 左右撐滿 */
-            margin-left: -20px;       /* 往左拉抵銷內縮 */
-            margin-right: -20px;      /* 往右拉 */
-            margin-bottom: 20px;      /* 🔥 與下方文字保持距離 */
+            width: calc(100% + 40px);
+            margin-left: -20px;
+            margin-right: -20px;
+            margin-bottom: 20px;
             height: 80px; 
             background: #000;
-            /* 移除上邊框 */
         }
 
         iframe {
@@ -160,24 +157,9 @@
         }
         
         /* 文字資訊區塊 */
-        .song-info {
-            color: inherit; 
-            /* 移除 z-index */
-        }
-        
-        .song-title { 
-            font-size: 18px; 
-            font-weight: 800; 
-            margin-bottom: 6px; 
-            line-height: 1.4; 
-            word-wrap: break-word;
-        }
-        
-        .artist { 
-            font-size: 14px; 
-            opacity: 0.7; 
-            font-weight: 500; 
-        }
+        .song-info { color: inherit; }
+        .song-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; line-height: 1.4; word-wrap: break-word; }
+        .artist { font-size: 14px; opacity: 0.7; font-weight: 500; }
         
         /* 模式切換 */
         body.light-mode { color: #222; }
@@ -217,7 +199,6 @@
             <button onclick="changeColor(-1)">❮ PREV</button>
             <span id="color-title">紅</span>
             <button onclick="changeColor(1)">NEXT ❯</button>
-            
             <div class="mobile-hint">← SWIPE →</div>
         </div>
 
@@ -337,18 +318,14 @@
             
             const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
 
-           if (colorName === "隨機") {
-                // ✨ 有質感的午夜極光色：深黑藍 -> 深紫 -> 霓虹紫微光
+            if (colorName === "隨機") {
+                // ✨ 質感改動：午夜極光 (Midnight Aurora)
                 document.body.style.background = "linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #6a11cb)";
-                
-                // 設定流動範圍
                 document.body.style.backgroundSize = "400% 400%";
-                
-                // ✨ 這裡改成 15s (原本10s)，流動速度變慢，會更優雅
                 document.body.style.animation = "gradientBG 15s ease infinite";
                 
-                // 背景深，所以字要變白
-                document.body.className = "dark-mode"; }
+                // 深色模式 (Dark Mode)
+                document.body.className = "dark-mode"; 
             } else {
                 document.body.style.background = colorCode;
                 document.body.style.animation = "none";
@@ -399,6 +376,7 @@
             render();
         }
         
+        /* 偵測左右滑動 */
         let touchstartX = 0;
         let touchendX = 0;
         const gestureZone = document.body;
