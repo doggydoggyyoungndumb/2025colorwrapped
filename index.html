@@ -13,7 +13,7 @@
 
     <style>
         /* ------------------------------------------------ */
-        /* 🎨 最終版：糖果流行明亮色 + 手機滑動 + 正確排序 */
+        /* 🎨 最終版：加強版獨角獸色 + 手機滑動 + 正確排序 */
         /* ------------------------------------------------ */
         
         * { box-sizing: border-box; } 
@@ -319,13 +319,12 @@
             const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
 
             if (colorName === "隨機") {
-                // ✨ 這裡改成：糖果流行明亮色 (Candy Pop)
-                // 顏色順序：亮青 -> 亮紫 -> 珊瑚紅 -> 陽光橘
-                document.body.style.background = "linear-gradient(-45deg, #12c2e9, #c471ed, #f64f59, #ffb347)";
+                // ✨ 獨角獸馬卡龍色：粉紅 -> 蜜桃 -> 薄荷 -> 粉藍
+                document.body.style.background = "linear-gradient(-45deg, #ff9a9e, #fad0c4, #84fab0, #8fd3f4)";
                 document.body.style.backgroundSize = "400% 400%";
                 document.body.style.animation = "gradientBG 10s ease infinite";
                 
-                // 明亮背景，所以用淺色模式 (字是黑的)
+                // 明亮背景，用淺色模式 (字是黑的)
                 document.body.className = "light-mode"; 
             } else {
                 document.body.style.background = colorCode;
