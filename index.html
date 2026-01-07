@@ -338,10 +338,13 @@
             const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
 
             if (colorName === "隨機") {
-                document.body.style.background = "linear-gradient(-45deg, #FF9A9E, #FECFEF, #E0C3FC, #8EC5FC)";
+                // 🔥 修改這裡：賽博龐克 (Cyberpunk) 風格
+                document.body.style.background = "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)";
                 document.body.style.backgroundSize = "400% 400%";
                 document.body.style.animation = "gradientBG 10s ease infinite";
-                document.body.className = "light-mode"; 
+                
+                // 🔥 修改這裡：切換成深色模式 (Dark Mode)，因為背景很黑
+                document.body.className = "dark-mode"; 
             } else {
                 document.body.style.background = colorCode;
                 document.body.style.animation = "none";
@@ -392,7 +395,6 @@
             render();
         }
         
-        /* 偵測左右滑動 */
         let touchstartX = 0;
         let touchendX = 0;
         const gestureZone = document.body;
