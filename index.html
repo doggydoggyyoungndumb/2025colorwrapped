@@ -13,7 +13,7 @@
 
     <style>
         /* ------------------------------------------------ */
-        /* 🎨 最終質感版：午夜極光隨機色 + 手機滑動 + 正確排序 */
+        /* 🎨 最終版：糖果流行明亮色 + 手機滑動 + 正確排序 */
         /* ------------------------------------------------ */
         
         * { box-sizing: border-box; } 
@@ -319,13 +319,14 @@
             const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
 
             if (colorName === "隨機") {
-                // ✨ 質感改動：午夜極光 (Midnight Aurora)
-                document.body.style.background = "linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #6a11cb)";
+                // ✨ 這裡改成：糖果流行明亮色 (Candy Pop)
+                // 顏色順序：亮青 -> 亮紫 -> 珊瑚紅 -> 陽光橘
+                document.body.style.background = "linear-gradient(-45deg, #12c2e9, #c471ed, #f64f59, #ffb347)";
                 document.body.style.backgroundSize = "400% 400%";
-                document.body.style.animation = "gradientBG 15s ease infinite";
+                document.body.style.animation = "gradientBG 10s ease infinite";
                 
-                // 深色模式 (Dark Mode)
-                document.body.className = "dark-mode"; 
+                // 明亮背景，所以用淺色模式 (字是黑的)
+                document.body.className = "light-mode"; 
             } else {
                 document.body.style.background = colorCode;
                 document.body.style.animation = "none";
@@ -376,7 +377,6 @@
             render();
         }
         
-        /* 偵測左右滑動 */
         let touchstartX = 0;
         let touchendX = 0;
         const gestureZone = document.body;
