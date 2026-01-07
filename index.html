@@ -13,7 +13,7 @@
 
     <style>
         /* ------------------------------------------------ */
-        /* 🎨 雜誌卡片版：手機滑動翻頁 + 隱藏按鈕 */
+        /* 🎨 最終修正版：順序恢復 + 手機滑動翻頁 */
         /* ------------------------------------------------ */
         
         * { box-sizing: border-box; } 
@@ -92,10 +92,8 @@
             letter-spacing: 2px;
         }
 
-        /* 手機版提示文字 (預設隱藏，手機版才顯示) */
-        .mobile-hint {
-            display: none;
-        }
+        /* 手機版提示文字 */
+        .mobile-hint { display: none; }
         
         /* 格線系統 */
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -113,12 +111,8 @@
             text-align: left;
             display: flex;
             flex-direction: column;
-            
-            /* 🔥 設定最小高度 */
-            min-height: 220px; 
-            position: relative; 
-            padding-bottom: 100px; 
             overflow: hidden; 
+            /* 🔥 移除之前為了絕對定位加的 padding-bottom */
         }
         
         .card:hover { 
@@ -143,10 +137,32 @@
             flex-shrink: 0; 
         }
 
+        /* 🔥 播放器容器：恢復為正常堆疊佈局 */
+        .iframe-container {
+            /* 移除絕對定位 */
+            position: relative;
+            width: calc(100% + 40px); /* 左右撐滿 */
+            margin-left: -20px;       /* 往左拉抵銷內縮 */
+            margin-right: -20px;      /* 往右拉 */
+            margin-bottom: 20px;      /* 🔥 與下方文字保持距離 */
+            height: 80px; 
+            background: #000;
+            /* 移除上邊框 */
+        }
+
+        iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            display: block;
+            border-radius: 0 !important; 
+            overflow: hidden !important;
+        }
+        
         /* 文字資訊區塊 */
         .song-info {
             color: inherit; 
-            z-index: 1;
+            /* 移除 z-index */
         }
         
         .song-title { 
@@ -163,27 +179,6 @@
             font-weight: 500; 
         }
         
-        /* 播放器容器 */
-        .iframe-container {
-            position: absolute; 
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 80px; 
-            background: #000;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            z-index: 2;
-        }
-
-        iframe {
-            width: 100% !important;
-            height: 100% !important;
-            border: none !important;
-            display: block;
-            border-radius: 0 !important; 
-            overflow: hidden !important;
-        }
-        
         /* 模式切換 */
         body.light-mode { color: #222; }
         body.light-mode .card { background: rgba(255, 255, 255, 0.4); border-color: rgba(255,255,255,0.4); } 
@@ -197,36 +192,18 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* 🔥🔥🔥 手機版面專屬修正 🔥🔥🔥 */
+        /* 手機版面專屬修正 */
         @media (max-width: 600px) {
-            /* 1. 隱藏按鈕 */
-            .nav-box button {
-                display: none; 
-            }
-            
-            /* 2. 顯示滑動提示 */
+            .nav-box button { display: none; }
             .mobile-hint {
                 display: block;
-                font-size: 10px;
-                opacity: 0.5;
-                margin-top: 5px;
-                letter-spacing: 2px;
-                position: absolute;
-                bottom: -20px;
-                width: 100%;
+                font-size: 10px; opacity: 0.5; margin-top: 5px; letter-spacing: 2px;
+                position: absolute; bottom: -20px; width: 100%;
             }
-
-            /* 3. 調整標題大小 */
             #color-title { font-size: 28px; }
-            
-            .nav-box {
-                margin-bottom: 40px;
-            }
-
+            .nav-box { margin-bottom: 40px; }
             .container { padding-top: 20px; }
             h1 { font-size: 2.5rem; }
-            
-            .card { min-height: 200px; }
         }
     </style>
 </head>
@@ -341,7 +318,7 @@
             "黑": "#2C2C2C", "白": "#EAEAEA", "隨機": "rainbow"
         };
 
-        let colorKeys = Object.keys(data);
+       let colorKeys = Object.keys(data);
         let currentIndex = 0;
 
         function getSpotifyId(link) {
@@ -384,16 +361,16 @@
                     <div class="card" style="animation: slideIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards ${i * 0.05}s; opacity: 0;">
                         <span class="user-name">${song.user}</span>
                         
-                        <div class="song-info">
-                            <div class="song-title">${song.name}</div>
-                            <div class="artist">${song.artist}</div>
-                        </div>
-
                         <div class="iframe-container">
                             ${embedUrl ? 
                             `<iframe src="${embedUrl}" scrolling="no" style="width:100%; height:80px; border:none; overflow:hidden;" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>` 
                             : `<div style="height:100%; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.05); font-size:12px; border:1px dashed currentColor; opacity:0.5;">待補連結</div>`
                             }
+                        </div>
+
+                        <div class="song-info">
+                            <div class="song-title">${song.name}</div>
+                            <div class="artist">${song.artist}</div>
                         </div>
                     </div>
                 `;
@@ -415,30 +392,15 @@
             render();
         }
         
-        /* 🔥🔥🔥 偵測左右滑動的程式碼 🔥🔥🔥 */
+        /* 偵測左右滑動 */
         let touchstartX = 0;
         let touchendX = 0;
-        
         const gestureZone = document.body;
-
-        gestureZone.addEventListener('touchstart', function(event) {
-            touchstartX = event.changedTouches[0].screenX;
-        }, false);
-
-        gestureZone.addEventListener('touchend', function(event) {
-            touchendX = event.changedTouches[0].screenX;
-            handleGesture();
-        }, false); 
-
+        gestureZone.addEventListener('touchstart', function(event) { touchstartX = event.changedTouches[0].screenX; }, false);
+        gestureZone.addEventListener('touchend', function(event) { touchendX = event.changedTouches[0].screenX; handleGesture(); }, false); 
         function handleGesture() {
-            // 如果結束點比開始點小 (往左滑)
-            if (touchendX < touchstartX - 50) {
-                changeColor(1); // 下一頁
-            }
-            // 如果結束點比開始點大 (往右滑)
-            if (touchendX > touchstartX + 50) {
-                changeColor(-1); // 上一頁
-            }
+            if (touchendX < touchstartX - 50) { changeColor(1); }
+            if (touchendX > touchstartX + 50) { changeColor(-1); }
         }
 
         render();
