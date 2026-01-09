@@ -13,7 +13,7 @@
 
     <style>
         /* ------------------------------------------------ */
-        /* 🎨 最終版：加強版獨角獸色 + 手機滑動 + 正確排序 */
+        /* 🎨 最終完整版：個人回顧彈窗 + 獨角獸色 + 完整功能 */
         /* ------------------------------------------------ */
         
         * { box-sizing: border-box; } 
@@ -119,7 +119,7 @@
             background: rgba(255, 255, 255, 0.25); 
         }
 
-        /* 名字小圓球 */
+        /* 名字小圓球 (現在可以點擊了) */
         .user-name { 
             font-size: 14px; 
             font-weight: 900;
@@ -133,7 +133,17 @@
             background: rgba(0, 0, 0, 0.3); 
             margin-bottom: 15px; 
             padding: 0;
-            flex-shrink: 0; 
+            flex-shrink: 0;
+            
+            /* 🔥 新增互動效果 */
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            z-index: 10; /* 確保在最上層 */
+        }
+        
+        .user-name:hover {
+            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.6);
         }
 
         /* 播放器容器 */
@@ -160,6 +170,79 @@
         .song-info { color: inherit; }
         .song-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; line-height: 1.4; word-wrap: break-word; }
         .artist { font-size: 14px; opacity: 0.7; font-weight: 500; }
+        
+        /* 🔥🔥🔥 彈跳視窗 (Modal) 樣式 🔥🔥🔥 */
+        .modal {
+            display: none; /* 預設隱藏 */
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* 黑底遮罩 */
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #222;
+            color: #fff;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh; /* 避免太長超出螢幕 */
+            overflow-y: auto; /* 超出可捲動 */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: left;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-list-item:last-child { border-bottom: none; }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .modal-song-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-song-name { font-weight: 700; font-size: 16px; margin-bottom: 2px; }
+        .modal-artist { font-size: 12px; opacity: 0.7; }
         
         /* 模式切換 */
         body.light-mode { color: #222; }
@@ -203,6 +286,16 @@
         </div>
 
         <div class="grid" id="song-list"></div>
+    </div>
+
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <span id="modal-user-name"></span> 的年度回顧
+            </div>
+            <div id="modal-list"></div>
+        </div>
     </div>
 
     <script>
@@ -319,12 +412,10 @@
             const isLight = (colorName === "白" || colorName === "黃" || colorName === "粉");
 
             if (colorName === "隨機") {
-                // ✨ 經典獨角獸色：粉紅 -> 淺粉 -> 粉紫 -> 粉藍
+                // ✨ 經典獨角獸色
                 document.body.style.background = "linear-gradient(-45deg, #FF9A9E, #FECFEF, #E0C3FC, #8EC5FC)";
                 document.body.style.backgroundSize = "400% 400%";
                 document.body.style.animation = "gradientBG 10s ease infinite";
-                
-                // 明亮背景，用淺色模式 (字是黑的)
                 document.body.className = "light-mode"; 
             } else {
                 document.body.style.background = colorCode;
@@ -343,7 +434,7 @@
 
                 const html = `
                     <div class="card" style="animation: slideIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards ${i * 0.05}s; opacity: 0;">
-                        <span class="user-name">${song.user}</span>
+                        <span class="user-name" onclick="openUserModal('${song.user}')">${song.user}</span>
                         
                         <div class="iframe-container">
                             ${embedUrl ? 
@@ -376,6 +467,7 @@
             render();
         }
         
+        /* 偵測左右滑動 */
         let touchstartX = 0;
         let touchendX = 0;
         const gestureZone = document.body;
@@ -384,6 +476,51 @@
         function handleGesture() {
             if (touchendX < touchstartX - 50) { changeColor(1); }
             if (touchendX > touchstartX + 50) { changeColor(-1); }
+        }
+
+        /* 🔥🔥🔥 彈跳視窗功能 🔥🔥🔥 */
+        const modal = document.getElementById("user-modal");
+        
+        function openUserModal(targetUser) {
+            const listContainer = document.getElementById("modal-list");
+            document.getElementById("modal-user-name").innerText = targetUser;
+            listContainer.innerHTML = "";
+
+            // 遍歷所有顏色，找出這個使用者的歌
+            Object.keys(data).forEach(color => {
+                const songs = data[color];
+                const userSong = songs.find(s => s.user === targetUser);
+                
+                if (userSong) {
+                    // 取得顏色代碼 (若是隨機色，用漸層)
+                    let dotColor = colorMap[color];
+                    if (color === "隨機") dotColor = "linear-gradient(135deg, #FF9A9E, #FECFEF)";
+
+                    const item = document.createElement("div");
+                    item.className = "modal-list-item";
+                    item.innerHTML = `
+                        <div class="color-dot" style="background: ${dotColor}"></div>
+                        <div class="modal-song-details">
+                            <div class="modal-song-name">${userSong.name}</div>
+                            <div class="modal-artist">${userSong.artist}</div>
+                        </div>
+                    `;
+                    listContainer.appendChild(item);
+                }
+            });
+
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // 點擊視窗外部也可以關閉
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
         }
 
         render();
